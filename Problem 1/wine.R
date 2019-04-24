@@ -1,79 +1,64 @@
 # read in data
 wine <- read.csv("https://raw.githubusercontent.com/jgscott/ECO395M/master/data/wine.csv")
-# create dummy for wine color
-wine$colordummy <- ifelse(wine$color == 'red', 1, 0)
+# load packages
+library(tidyverse)
+library(ggplot2)
+library(ggfortify) #for plotting pc1 and pc2
+library(corrplot)
+source("http://www.sthda.com/upload/rquery_cormat.r")
 
-# principal component analysis
-X = as.matrix(wine[,-1])
-y = wine[,1]
+# principal component analysis for wine color
+X = wine[,c(1:11)]
+pc1 = prcomp(X, scale=TRUE, center=TRUE)
+loadings = pc1$rotation
+scores = pc1$x
+summary(pc1)
+autoplot(pc1)
+# revealing the colors associated for each group (checking work)
+scores = pc1$x
+qplot(scores[,1], scores[,2], color=wine$color, xlab='Component 1', ylab='Component 2')
+# seeing how PCA performed
+xtabs(~cluster1$cluster + wine$color)
 
+# correlation matrix for next part
+rquery.cormat(X)
+# this allows us to identify correlations between chemicals
 
-# Plot a random sample of the NIR spectra
-mu_x = colMeans(X)
-nir_wavelength = seq(900, 1700, by=2)
-par(mfrow=c(2,2))
-for(i in sample.int(nrow(X), 4)) {
-  plot(nir_wavelength, X[i,] - mu_x, main=i, ylim=c(-0.1,0.1))
-}
-
-# They all differ from the mean in very structured ways
-# Extremely strong collinearity among the predictor variables
-sigma_X = cor(X)
-sigma_X[1:10,1:10]
-
-
-# Let's try dimensionality reduction via PCA
-pc_wine = prcomp(X, scale=TRUE)
-
-# pc_wine$x has the summary variables
-# Regress on the first K
-K = 3
-scores = pc_wine$x[,1:K]
-pcr1 = lm(y ~ scores)
-
-summary(pcr1)
-
-# Show the model fit
-plot(fitted(pcr1), y)
-
-# Visualize the first few principal components:
-# these are the coefficients in the linear combination for each summary
-plot(nir_wavelength, pc_gasoline$rotation[,1], ylim=c(-0.15,0.15))
-plot(nir_wavelength, pc_gasoline$rotation[,2], ylim=c(-0.15,0.15))
-plot(nir_wavelength, pc_gasoline$rotation[,3], ylim=c(-0.15,0.15))
-
+# k means clustering for wine color
+X = wine[,c(1:11)]
+X = scale(X, center=TRUE, scale=TRUE)
+mu = attr(X,"scaled:center")
+sigma = attr(X,"scaled:scale")
+# run k-means with 2 clusters -- one for white and red wine
+cluster1 = kmeans(X, 2, nstart=25)
+# examining statistics in the 2 clusters
+cluster1$center[1,]*sigma + mu
+cluster1$center[2,]*sigma + mu
+# random assortment of plots
+qplot(volatile.acidity, alcohol, data=wine, color=factor(cluster1$cluster))
+qplot(residual.sugar, pH, data=wine, color=factor(cluster1$cluster))
+qplot(fixed.acidity, chlorides, data=wine, color=factor(cluster1$cluster))
+qplot(total.sulfur.dioxide, density, data=wine, color=factor(cluster1$cluster))
+      
+# 1 is red, 2 is white
+# checking work
+# qplot(volatile.acidity, alcohol, data=wine, color=wine$color)
 ################################################################################
-# k means clustering
-# get rid of color (which is not numeric) to allow scaling
-wine$color <- NULL
-wine_scaled <- scale(wine, center=TRUE, scale=TRUE) 
 
-## first, consider just red and white meat
-alcohol_quality = wine_scaled[,c("alcohol","quality")]
-head(alcohol_quality)
-plot(alcohol_quality)
+# k-means for wine quality
+summary(wine$quality)
+# quality ranges between 3 and 9; therefore there are 7 clusters that the wine can fall in
+# all are pretty much useless
+cluster2 = kmeans(X, 7, nstart=25)
+qplot(volatile.acidity, alcohol, data=wine, color=factor(cluster2$cluster))
+qplot(residual.sugar, pH, data=wine, color=factor(cluster2$cluster))
+qplot(fixed.acidity, chlorides, data=wine, color=factor(cluster2$cluster))
+qplot(total.sulfur.dioxide, density, data=wine, color=factor(cluster2$cluster))
 
+# principal component analysis for wine quality
+# just as useless
+pc2 = kmeans(scores[,1:11], 7, nstart=25)
+qplot(scores[,1], scores[,2], color=factor(pc2$cluster), xlab='Component 1', ylab='Component 2')
 
-# Use k-means to get 3 clusters
-cluster_alcoholQuality <- kmeans(alcohol_quality, centers=3)
-
-# plot with labels
-plot(alcohol_quality, xlim=c(-5,5), 
-     type="n", xlab="% Alcohol", ylab="Quality (Score)")  
-text(alcohol_quality, labels=rownames(alcohol_quality), 
-     col=rainbow(3)[cluster_alcoholQuality$cluster])
-
-## same plot, but now with clustering on all protein groups
-## change the number of centers to see what happens.
-cluster_all <- kmeans(wine_scaled, centers=7, nstart=50)
-names(cluster_all)
-
-# Extract some of the information from the fitted model
-cluster_all$centers
-cluster_all$cluster
-
-# Plot the clustering on the red-white meat axes
-plot(wine_scaled[,"alcohol"], wine_scaled[,"quality"], xlim=c(-2,2.75), 
-     type="n", ylab="Quality (score)", xlab="% Alcohol")
-text(wine_scaled[,"alcohol"], wine_scaled[,"quality"], labels=rownames(wine), 
-     col=rainbow(7)[cluster_all$cluster])
+# evidence that quality prediction is no good
+xtabs(~cluster2$cluster + wine$quality)
