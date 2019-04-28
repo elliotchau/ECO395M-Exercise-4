@@ -1,6 +1,6 @@
 library(skimr)
+social_marketing <- read.csv("https://raw.githubusercontent.com/jgscott/ECO395M/master/data/social_marketing.csv")
 str(social_marketing)
-
 skim(social_marketing)
 
 summary(social_marketing)

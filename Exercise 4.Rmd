@@ -1,0 +1,153 @@
+---
+title: Exercise 4
+output: github_document
+---
+By Hana Krijestorac, David Garrett, and Elliot Chau
+
+Problem 1
+================
+## Clustering and PCA of Wine
+
+```{r, include=FALSE}
+# read in data
+wine <- read.csv("https://raw.githubusercontent.com/jgscott/ECO395M/master/data/wine.csv")
+# load packages
+library(tidyverse)
+library(ggplot2)
+library(ggfortify) #for plotting pc1 and pc2
+library(corrplot)
+source("http://www.sthda.com/upload/rquery_cormat.r")
+
+# principal component analysis for wine color
+X = wine[,c(1:11)] # unsupervised data only
+pc1 = prcomp(X, scale=TRUE, center=TRUE)
+loadings = pc1$rotation
+scores = pc1$x
+```
+
+```{r, include=FALSE}
+X = wine[,c(1:11)] # unsupervised data only
+pc1 = prcomp(X, scale=TRUE, center=TRUE)
+loadings = pc1$rotation
+scores = pc1$x
+```
+### Determining the color of the wine
+
+*Principal component analysis*
+
+We first approach this problem utilizing principal component analysis. After scaling and centering the data, we arrive at 11 componenets with the following characteristics. 
+
+```{r, echo=FALSE}
+summary(pc1) # statisitics about each component
+```
+
+To illustrate this information, we use a biplot to plot each individual wine (identified by a unique number). The vectors indicate the direction of each chemical characteristic.
+
+```{r, echo=FALSE}
+biplot(pc1) # each wine's ID with chemical characteristics vectors
+```
+
+Since the prior plot is somewhat difficult to interpret, we will remove the vectors and replace wine identification numbers with dots.
+
+```{r, echo=FALSE}
+autoplot(pc1) # a closer look with just the data points
+```
+
+We can see two distinct groups which may indicate differences as a result of the wine's color.
+
+```{r, echo=FALSE}
+qplot(scores[,1], scores[,2], color=wine$color, xlab='Component 1', ylab='Component 2')
+```
+
+Indeed, when applying "supervised" information to add color, the plot is separated into two groups based on color.
+
+To further analyze the data, we create a correlation matrix of how chemical characteristics relate to each other. This may allow us to test various relationships in the next part.
+
+```{r, include=FALSE}
+rquery.cormat(X)
+```
+
+```{r, include=FALSE}
+X = scale(X, center=TRUE, scale=TRUE)
+mu = attr(X,"scaled:center")
+sigma = attr(X,"scaled:scale")
+# run k-means with 2 clusters for each color
+cluster1 = kmeans(X, 2, nstart=25)
+```
+*k-means clustering*
+
+We then run k-means clustering. The summary characteristics for the two clusters is as follows:
+
+```{r, echo=FALSE}
+cluster1$center[1,]*sigma + mu
+cluster1$center[2,]*sigma + mu
+```
+
+Based on this information, we are able to see differences between the two clusters. The second cluster has notably higher acidity levels, lower sulfur levels, and less sugar. The following is an assortment of plots separated by wine color.
+
+```{r, echo=FALSE}
+qplot(volatile.acidity, alcohol, data=wine, color=factor(cluster1$cluster))
+qplot(residual.sugar, pH, data=wine, color=factor(cluster1$cluster))
+qplot(fixed.acidity, chlorides, data=wine, color=factor(cluster1$cluster))
+qplot(total.sulfur.dioxide, density, data=wine, color=factor(cluster1$cluster))
+qplot(alcohol, density, data=wine, color=factor(cluster1$cluster))
+```
+
+We then determine the accuracy of k-means clustering. As we can see, it seems to do an excellent job in clustering wines by their color.
+
+```{r, echo=FALSE}
+xtabs(~cluster1$cluster + wine$color)
+```
+
+Based on the granularity of analysis available with k-means clustering, we believe it is the technique that makes more sense. We are able to compute accuracy with the use of supervised information, and we are also able to break down comparisons by chemical component.
+
+### Wine quality
+
+We begin by taking a look at the summary statistics for the wine quality column.
+
+```{r, echo=FALSE}
+summary(wine$quality)
+```
+
+As we can see, the category ranges from a low of 3 and a high of 9. This means there are a total of 7 ratings. 
+
+*Principal component analysis*
+
+```{r, include=FALSE}
+pc2 = kmeans(scores[,1:11], 7, nstart=25)
+```
+
+We start with principal component analysis. The following plot shows a general ability to create 7 somewhat distinct groups.
+
+```{r, echo=FALSE}
+qplot(scores[,1], scores[,2], color=factor(pc2$cluster), xlab='Component 1', ylab='Component 2')
+```
+
+However, when utilizing the supervised information to check our work, the groups were not grouped by the quality score. Therefore, PCA is not a technique that can complete this task.
+
+```{r, echo=FALSE}
+qplot(scores[,1], scores[,2], color=factor(wine$quality), xlab='Component 1', ylab='Component 2')
+```
+
+*k-means clustering*
+
+```{r, include=FALSE}
+cluster2 = kmeans(X, 7, nstart=25)
+```
+
+We then move on to k-means clustering. Clustering by 7 score categories, the following is a variety of plots.
+
+```{r, echo=FALSE}
+qplot(volatile.acidity, alcohol, data=wine, color=factor(cluster2$cluster))
+qplot(residual.sugar, pH, data=wine, color=factor(cluster2$cluster))
+qplot(fixed.acidity, chlorides, data=wine, color=factor(cluster2$cluster))
+qplot(total.sulfur.dioxide, density, data=wine, color=factor(cluster2$cluster))
+```
+
+The visual evidence suggests that all the overlapping colors is not so useful in clustering by score. Let's take a look at the raw numbers. 
+
+```{r, echo=FALSE}
+xtabs(~cluster2$cluster + wine$quality)
+```
+
+The table shows that each of the 7 clusters basically has a random distribution of wines. The k-means technique is also not able to determine wine quality. This is more than likely the result of subjective scores assigned to each wine, with each wine snob assigning different value to certain notes, flavors, and aromas. 
