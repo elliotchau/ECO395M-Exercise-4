@@ -196,15 +196,6 @@ We then run k-means clustering. The summary characteristics for the two
 clusters is as follows:
 
     ##        fixed.acidity     volatile.acidity          citric.acid 
-    ##            8.2895922            0.5319416            0.2695435 
-    ##       residual.sugar            chlorides  free.sulfur.dioxide 
-    ##            2.6342666            0.0883238           15.7647596 
-    ## total.sulfur.dioxide              density                   pH 
-    ##           48.6396835            0.9967404            3.3097200 
-    ##            sulphates              alcohol 
-    ##            0.6567194           10.4015216
-
-    ##        fixed.acidity     volatile.acidity          citric.acid 
     ##           6.85167903           0.27458385           0.33524928 
     ##       residual.sugar            chlorides  free.sulfur.dioxide 
     ##           6.39402555           0.04510424          35.52152864 
@@ -212,6 +203,15 @@ clusters is as follows:
     ##         138.45848785           0.99400486           3.18762464 
     ##            sulphates              alcohol 
     ##           0.48880511          10.52235888
+
+    ##        fixed.acidity     volatile.acidity          citric.acid 
+    ##            8.2895922            0.5319416            0.2695435 
+    ##       residual.sugar            chlorides  free.sulfur.dioxide 
+    ##            2.6342666            0.0883238           15.7647596 
+    ## total.sulfur.dioxide              density                   pH 
+    ##           48.6396835            0.9967404            3.3097200 
+    ##            sulphates              alcohol 
+    ##            0.6567194           10.4015216
 
 Based on this information, we are able to see differences between the
 two clusters. The second cluster has notably higher acidity levels,
@@ -226,8 +226,8 @@ seems to do an excellent job in clustering wines by their color.
 
     ##                 wine$color
     ## cluster1$cluster  red white
-    ##                1 1575    68
-    ##                2   24  4830
+    ##                1   24  4830
+    ##                2 1575    68
 
 Based on the granularity of analysis available with k-means clustering,
 we believe it is the technique that makes more sense. We are able to
@@ -271,13 +271,13 @@ useful in clustering by score. Let’s take a look at the raw numbers.
 
     ##                 wine$quality
     ## cluster2$cluster   3   4   5   6   7   8   9
-    ##                1   5  63 414 538 143  29   0
-    ##                2   7  24 653 646 122  21   1
-    ##                3   2   2  27  16   2   0   0
-    ##                4   2  28 297 501 179  30   0
-    ##                5   4  20  77 529 450  97   4
-    ##                6   6  64 472 343  43   2   0
-    ##                7   4  15 198 263 140  14   0
+    ##                1   7  24 655 640 122  22   0
+    ##                2   4  15 200 265 141  14   0
+    ##                3   1   2  20   9   1   0   0
+    ##                4   2  27 269 475 189  31   0
+    ##                5   7  63 471 350  43   2   0
+    ##                6   4  21  77 548 446  97   4
+    ##                7   5  64 446 549 137  27   1
 
 The table shows that each of the 7 clusters basically has a random
 distribution of wines. The k-means technique is also not able to
@@ -423,10 +423,10 @@ relevant subsets based on confidence, lift, and support later.
     ## Absolute minimum support count: 152 
     ## 
     ## set item appearances ...[0 item(s)] done [0.00s].
-    ## set transactions ...[169 item(s), 15296 transaction(s)] done [0.01s].
+    ## set transactions ...[169 item(s), 15296 transaction(s)] done [0.03s].
     ## sorting and recoding items ... [71 item(s)] done [0.00s].
-    ## creating transaction tree ... done [0.02s].
-    ## checking subsets of size 1 2 3 done [0.01s].
+    ## creating transaction tree ... done [0.01s].
+    ## checking subsets of size 1 2 3 done [0.00s].
     ## writing ... [45 rule(s)] done [0.00s].
     ## creating S4 object  ... done [0.01s].
 
@@ -631,7 +631,31 @@ plot.
 
 ![](Exercise_4_files/figure-gfm/unnamed-chunk-39-2.png)<!-- -->
 
-We then find the following 10 “best” associations.
+We then find the following 10 “best”
+    associations.
+
+    ##      lhs                   rhs                support    confidence
+    ## [1]  {curd}             => {whole milk}       0.01261768 0.3683206 
+    ## [2]  {butter}           => {whole milk}       0.01438285 0.4036697 
+    ## [3]  {pip fruit}        => {tropical fruit}   0.01268305 0.2607527 
+    ## [4]  {tropical fruit}   => {pip fruit}        0.01268305 0.1879845 
+    ## [5]  {citrus fruit}     => {tropical fruit}   0.01248692 0.2346437 
+    ## [6]  {tropical fruit}   => {citrus fruit}     0.01248692 0.1850775 
+    ## [7]  {tropical fruit}   => {root vegetables}  0.01098326 0.1627907 
+    ## [8]  {root vegetables}  => {tropical fruit}   0.01098326 0.1567164 
+    ## [9]  {root vegetables}  => {other vegetables} 0.02536611 0.3619403 
+    ## [10] {other vegetables} => {root vegetables}  0.02536611 0.2038886 
+    ##      lift     count
+    ## [1]  2.241875 193  
+    ## [2]  2.457036 220  
+    ## [3]  3.864800 194  
+    ## [4]  3.864800 194  
+    ## [5]  3.477820 191  
+    ## [6]  3.477820 191  
+    ## [7]  2.322805 168  
+    ## [8]  2.322805 168  
+    ## [9]  2.909216 388  
+    ## [10] 2.909216 388
 
     ## set of 45 rules
     ## 

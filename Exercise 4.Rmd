@@ -383,7 +383,7 @@ plot(groceryrules, method='two-key plot')
 We then find the following 10 “best” associations.
 
 ```{r, echo=FALSE}
-inspect(subset(groceryrules, lift > 10 & confidence > 0.5))
+inspect(subset(groceryrules, lift > 2, confidence > 0.3, support > 0.035))
 ```
 
 ```{r, include=FALSE}
