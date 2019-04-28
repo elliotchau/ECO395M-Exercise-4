@@ -271,13 +271,13 @@ useful in clustering by score. Let’s take a look at the raw numbers.
 
     ##                 wine$quality
     ## cluster2$cluster   3   4   5   6   7   8   9
-    ##                1   4  20  77 527 451  96   4
-    ##                2   7  24 651 645 122  21   1
-    ##                3   6  64 476 343  43   2   0
-    ##                4   2  28 300 504 177  30   0
-    ##                5   4  15 192 260 140  14   0
-    ##                6   5  63 412 538 144  30   0
-    ##                7   2   2  30  19   2   0   0
+    ##                1   5  63 414 538 143  29   0
+    ##                2   7  24 653 646 122  21   1
+    ##                3   2   2  27  16   2   0   0
+    ##                4   2  28 297 501 179  30   0
+    ##                5   4  20  77 529 450  97   4
+    ##                6   6  64 472 343  43   2   0
+    ##                7   4  15 198 263 140  14   0
 
 The table shows that each of the 7 clusters basically has a random
 distribution of wines. The k-means technique is also not able to
@@ -372,31 +372,8 @@ subgroups to further their sales.
 
 ## Association rules for grocery purchases
 
-    ## Loading required package: Matrix
-
-    ## 
-    ## Attaching package: 'Matrix'
-
-    ## The following object is masked from 'package:tidyr':
-    ## 
-    ##     expand
-
-    ## 
-    ## Attaching package: 'arules'
-
-    ## The following object is masked from 'package:dplyr':
-    ## 
-    ##     recode
-
-    ## The following objects are masked from 'package:base':
-    ## 
-    ##     abbreviate, write
-
-    ## Loading required package: grid
-
-    ## Registered S3 method overwritten by 'seriation':
-    ##   method         from 
-    ##   reorder.hclust gclus
+We first start by finding a summary of grocery statistics. We see that
+“whole milk” and “other vegetables” top the list of transactions.
 
     ## transactions as itemMatrix in sparse format with
     ##  15296 rows (elements/itemsets/transactions) and
@@ -428,11 +405,8 @@ subgroups to further their sales.
     ## 2             2
     ## 3             3
 
-We computed 45 association rules, but narrowed down the rules into
-relevant subsets based on confidence, lift, and support. We created a
-subset to only include a lift measure of greater than 2, and a
-confidence measure greater than 0.3, and a subset with support greater
-than 0.035.
+We computed 45 association rules. We will narrow down the rules into
+relevant subsets based on confidence, lift, and support later.
 
     ## Apriori
     ## 
@@ -449,10 +423,10 @@ than 0.035.
     ## Absolute minimum support count: 152 
     ## 
     ## set item appearances ...[0 item(s)] done [0.00s].
-    ## set transactions ...[169 item(s), 15296 transaction(s)] done [0.02s].
+    ## set transactions ...[169 item(s), 15296 transaction(s)] done [0.01s].
     ## sorting and recoding items ... [71 item(s)] done [0.00s].
-    ## creating transaction tree ... done [0.03s].
-    ## checking subsets of size 1 2 3 done [0.00s].
+    ## creating transaction tree ... done [0.02s].
+    ## checking subsets of size 1 2 3 done [0.01s].
     ## writing ... [45 rule(s)] done [0.00s].
     ## creating S4 object  ... done [0.01s].
 
@@ -549,6 +523,10 @@ than 0.035.
     ## [44] 1.999064  625 
     ## [45] 1.999064  625
 
+We then created a subset to only include a lift measure of greater than
+2, a confidence measure greater than 0.3, and a subset with support
+greater than 0.035.
+
 The level of confidence was chosen based on interpretability since it
 was difficult to find any rules for confidence greater than 4.
 Confidence measures how often items in itemset Y appear in transactions
@@ -559,8 +537,10 @@ This could be useful to know in a retail context i.e. where and when to
 give promotions or ideas for product placement for milk given that you
 already are in the vegetable section. This is also reflected in the plot
 of association rules where “whole milk” and “other vegetables” are the
-two largest
-    clusters.
+two largest clusters.
+
+This is the subset for confidence \>
+    0.3.
 
     ##     lhs                   rhs                support    confidence
     ## [1] {curd}             => {whole milk}       0.01261768 0.3683206 
@@ -575,16 +555,14 @@ two largest
     ## [4] 1.964566 346  
     ## [5] 1.999064 625
 
-    ## To reduce overplotting, jitter is added! Use jitter = 0 to prevent jitter.
-
-![](Exercise_4_files/figure-gfm/unnamed-chunk-36-1.png)<!-- -->
-
 Support measures the frequency of an itemset within transactions. The
 choice of a low level of support was driven by the fact that there
 weren’t too many different grocery items within the dataset. Again, a
 strong association between “whole milk” and “other vegetables,” perhaps
-since these are generally staple
-    items.
+since these are generally staple items.
+
+This is the subset for support \>
+    0.035.
 
     ##     lhs                   rhs                support    confidence
     ## [1] {}                 => {soda}             0.11212082 0.1121208 
@@ -614,8 +592,10 @@ grouped together in the top right corner. Lift might be the most
 informative measure since it measures the conditional probability of
 purchasing itemset X given that you already purchased itemset Y and
 therefore takes into account statistical dependence, whereas confidence
-and support do
-    not.
+and support do not.
+
+This is the subset for lift \>
+    2.
 
     ##      lhs                   rhs                support    confidence
     ## [1]  {curd}             => {whole milk}       0.01261768 0.3683206 
@@ -640,8 +620,18 @@ and support do
     ## [9]  2.909216 388  
     ## [10] 2.909216 388
 
-When combining all three measures, we found the following 10 “best”
-associations.
+We combine these three measures to create a scatterplot and a two-key
+plot.
+
+    ## To reduce overplotting, jitter is added! Use jitter = 0 to prevent jitter.
+
+![](Exercise_4_files/figure-gfm/unnamed-chunk-39-1.png)<!-- -->
+
+    ## To reduce overplotting, jitter is added! Use jitter = 0 to prevent jitter.
+
+![](Exercise_4_files/figure-gfm/unnamed-chunk-39-2.png)<!-- -->
+
+We then find the following 10 “best” associations.
 
     ## set of 45 rules
     ## 
@@ -665,6 +655,9 @@ associations.
     ##         data ntransactions support confidence
     ##  grocertrans         15296    0.01        0.1
 
-![](Exercise_4_files/figure-gfm/unnamed-chunk-42-1.png)<!-- -->
+We visualize these associations through a network graph. The larger the
+label, the more frequent the transaction. “Whole milk,” “other
+vegetables,” “root vegetables,” and “soda” seem to tie together most
+transctions.
 
-![](Exercise_4_files/figure-gfm/unnamed-chunk-43-1.png)<!-- -->
+![](Exercise_4_files/figure-gfm/unnamed-chunk-44-1.png)<!-- -->

@@ -303,7 +303,7 @@ Problem 3
 ================
 ## Association rules for grocery purchases
 
-```{r, echo=FALSE}
+```{r, include=FALSE}
 library(tidyverse)
 library(arules)
 library(arulesViz)
@@ -324,11 +324,15 @@ grocerlist = split(x=grocery$items, f=grocery$ID)
 
 grocerlist = lapply(grocerlist, unique)
 grocertrans = as(grocerlist, "transactions")
+```
 
+We first start by finding a summary of grocery statistics. We see that "whole milk" and "other vegetables" top the list of transactions.
+
+```{r, echo=FALSE}
 summary(grocertrans)
 ```
 
-We computed 45 association rules, but narrowed down the rules into relevant subsets based on confidence, lift, and support. We created a subset to only include a lift measure of greater than 2, and a confidence measure greater than 0.3, and a subset with support greater than 0.035.
+We computed 45 association rules. We will narrow down the rules into relevant subsets based on confidence, lift, and support later. 
 
 ```{r, echo=FALSE}
 groceryrules = apriori(grocertrans, 
@@ -336,8 +340,12 @@ groceryrules = apriori(grocertrans,
 inspect(groceryrules)
 ```
 
+We then created a subset to only include a lift measure of greater than 2, a confidence measure greater than 0.3, and a subset with support greater than 0.035.
+
+
 The level of confidence was chosen based on interpretability since it was difficult to find any rules for confidence greater than 4. Confidence measures how often items in itemset Y appear in transactions which contain itemset X. Some rules that were identified through this method was associations like curd and whole milk (perhaps for dairy lovers?), and both root vegetables and other vegetables and whole milk. This could be useful to know in a retail context i.e. where and when to give promotions or ideas for product placement for milk given that you already are in the vegetable section. This is also reflected in the plot of association rules where “whole milk” and “other vegetables” are the two largest clusters.
 
+This is the subset for confidence > 0.3.
 ```{r, echo=FALSE}
 inspect(subset(groceryrules, confidence > 0.3))
 ```
@@ -349,16 +357,9 @@ inspect(subset(groceryrules, lift > 10 & confidence > 0.5))
 plot(groceryrules)
 ```
 
-```{r, echo=FALSE}
-plot(groceryrules, measure = c("support", "lift"), shading = "confidence")
-```
-
-```{r, include=FALSE}
-plot(groceryrules, method='two-key plot')
-```
-
 Support measures the frequency of an itemset within transactions. The choice of a low level of support was driven by the fact that there weren’t too many different grocery items within the dataset. Again, a strong association between “whole milk” and “other vegetables,” perhaps since these are generally staple items. 
 
+This is the subset for support > 0.035.
 ```{r, echo=FALSE}
 # can now look at subsets driven by the plot
 inspect(subset(groceryrules, support > 0.035))
@@ -366,12 +367,20 @@ inspect(subset(groceryrules, support > 0.035))
 
 When looking at lift, the rules that were generated were generally intuitive. For example, if a consumer buys root vegetables, he or she is likely to also purchase “other vegetables,” or has a conditional probability of 2.909. Another intuitive rule that was generated was that the conditional probability of purchasing citrus fruit given that you already bought tropical fruit was 3.477. This make sense considering that grocery stores tend to group these items together and offer promotions for similar items. Again, this is reflected in the overall plot of the 45 association rules where different types of fruits are grouped together in the top right corner. Lift might be the most informative measure since it measures the conditional probability of purchasing itemset X given that you already purchased itemset Y and therefore takes into account statistical dependence, whereas confidence and support do not. 
 
+This is the subset for lift > 2.
 ```{r, echo=FALSE}
 ## Choose a subset
 inspect(subset(groceryrules, lift > 2))
 ```
 
-When combining all three measures, we found the following 10 “best” associations.
+We combine these three measures to create a scatterplot and a two-key plot.
+
+```{r, echo=FALSE}
+plot(groceryrules, measure = c("support", "lift"), shading = "confidence")
+plot(groceryrules, method='two-key plot')
+```
+
+We then find the following 10 “best” associations.
 
 ```{r, echo=FALSE}
 inspect(subset(groceryrules, lift > 10 & confidence > 0.5))
@@ -385,8 +394,13 @@ sub1 = subset(groceryrules, subset=confidence > 0.01 & support > 0.005)
 
 ```{r, echo=FALSE}
 summary(sub1)
+```
+
+```{r, include=FALSE}
 plot(sub1, method='graph')
 ```
+
+We visualize these associations through a network graph. The larger the label, the more frequent the transaction. "Whole milk," "other vegetables," "root vegetables," and "soda" seem to tie together most transctions. 
 
 ```{r, echo=FALSE}
 plot(head(sub1, 100, by='lift'), method='graph')
