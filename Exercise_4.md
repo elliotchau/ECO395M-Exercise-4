@@ -271,13 +271,13 @@ useful in clustering by score. Let’s take a look at the raw numbers.
 
     ##                 wine$quality
     ## cluster2$cluster   3   4   5   6   7   8   9
-    ##                1   4  21  80 528 451  96   4
-    ##                2   7  61 470 347  42   2   0
-    ##                3   4  15 200 266 140  14   0
-    ##                4   5  64 414 536 144  30   0
-    ##                5   1   2  20   9   1   0   0
-    ##                6   7  24 656 647 122  21   1
-    ##                7   2  29 298 503 179  30   0
+    ##                1   4  20  77 527 451  96   4
+    ##                2   7  24 651 645 122  21   1
+    ##                3   6  64 476 343  43   2   0
+    ##                4   2  28 300 504 177  30   0
+    ##                5   4  15 192 260 140  14   0
+    ##                6   5  63 412 538 144  30   0
+    ##                7   2   2  30  19   2   0   0
 
 The table shows that each of the 7 clusters basically has a random
 distribution of wines. The k-means technique is also not able to
@@ -363,11 +363,308 @@ segment the market into different groups.
 
 ![](Exercise_4_files/figure-gfm/unnamed-chunk-31-1.png)<!-- -->
 
-In doing so we found 6 main marketing groups based on correlated
+In doing so we found six main marketing groups based on correlated
 interests. We believe that by focusing their attention on these six
 groups, NutrientH20 can direct their content in order to relate to these
 subgroups to further their sales.
 
-# Problem 2
+# Problem 3
 
 ## Association rules for grocery purchases
+
+    ## Loading required package: Matrix
+
+    ## 
+    ## Attaching package: 'Matrix'
+
+    ## The following object is masked from 'package:tidyr':
+    ## 
+    ##     expand
+
+    ## 
+    ## Attaching package: 'arules'
+
+    ## The following object is masked from 'package:dplyr':
+    ## 
+    ##     recode
+
+    ## The following objects are masked from 'package:base':
+    ## 
+    ##     abbreviate, write
+
+    ## Loading required package: grid
+
+    ## Registered S3 method overwritten by 'seriation':
+    ##   method         from 
+    ##   reorder.hclust gclus
+
+    ## transactions as itemMatrix in sparse format with
+    ##  15296 rows (elements/itemsets/transactions) and
+    ##  169 columns (items) and a density of 0.01677625 
+    ## 
+    ## most frequent items:
+    ##       whole milk other vegetables       rolls/buns             soda 
+    ##             2513             1903             1809             1715 
+    ##           yogurt          (Other) 
+    ##             1372            34055 
+    ## 
+    ## element (itemset/transaction) length distribution:
+    ## sizes
+    ##    1    2    3    4 
+    ## 3485 2630 2102 7079 
+    ## 
+    ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+    ##   1.000   2.000   3.000   2.835   4.000   4.000 
+    ## 
+    ## includes extended item information - examples:
+    ##             labels
+    ## 1 abrasive cleaner
+    ## 2 artif. sweetener
+    ## 3   baby cosmetics
+    ## 
+    ## includes extended transaction information - examples:
+    ##   transactionID
+    ## 1             1
+    ## 2             2
+    ## 3             3
+
+We computed 45 association rules, but narrowed down the rules into
+relevant subsets based on confidence, lift, and support. We created a
+subset to only include a lift measure of greater than 2, and a
+confidence measure greater than 0.3, and a subset with support greater
+than 0.035.
+
+    ## Apriori
+    ## 
+    ## Parameter specification:
+    ##  confidence minval smax arem  aval originalSupport maxtime support minlen
+    ##         0.1    0.1    1 none FALSE            TRUE       5    0.01      1
+    ##  maxlen target   ext
+    ##       5  rules FALSE
+    ## 
+    ## Algorithmic control:
+    ##  filter tree heap memopt load sort verbose
+    ##     0.1 TRUE TRUE  FALSE TRUE    2    TRUE
+    ## 
+    ## Absolute minimum support count: 152 
+    ## 
+    ## set item appearances ...[0 item(s)] done [0.00s].
+    ## set transactions ...[169 item(s), 15296 transaction(s)] done [0.02s].
+    ## sorting and recoding items ... [71 item(s)] done [0.00s].
+    ## creating transaction tree ... done [0.03s].
+    ## checking subsets of size 1 2 3 done [0.00s].
+    ## writing ... [45 rule(s)] done [0.00s].
+    ## creating S4 object  ... done [0.01s].
+
+    ##      lhs                     rhs                support    confidence
+    ## [1]  {}                   => {soda}             0.11212082 0.1121208 
+    ## [2]  {}                   => {rolls/buns}       0.11826621 0.1182662 
+    ## [3]  {}                   => {other vegetables} 0.12441161 0.1244116 
+    ## [4]  {}                   => {whole milk}       0.16429132 0.1642913 
+    ## [5]  {curd}               => {whole milk}       0.01261768 0.3683206 
+    ## [6]  {butter}             => {whole milk}       0.01438285 0.4036697 
+    ## [7]  {whipped/sour cream} => {whole milk}       0.01144090 0.2482270 
+    ## [8]  {pip fruit}          => {tropical fruit}   0.01268305 0.2607527 
+    ## [9]  {tropical fruit}     => {pip fruit}        0.01268305 0.1879845 
+    ## [10] {pip fruit}          => {other vegetables} 0.01091789 0.2244624 
+    ## [11] {pip fruit}          => {whole milk}       0.01255230 0.2580645 
+    ## [12] {pastry}             => {rolls/buns}       0.01019874 0.1782857 
+    ## [13] {citrus fruit}       => {tropical fruit}   0.01248692 0.2346437 
+    ## [14] {tropical fruit}     => {citrus fruit}     0.01248692 0.1850775 
+    ## [15] {citrus fruit}       => {other vegetables} 0.01281381 0.2407862 
+    ## [16] {other vegetables}   => {citrus fruit}     0.01281381 0.1029953 
+    ## [17] {citrus fruit}       => {whole milk}       0.01281381 0.2407862 
+    ## [18] {sausage}            => {rolls/buns}       0.01078713 0.1785714 
+    ## [19] {sausage}            => {other vegetables} 0.01261768 0.2088745 
+    ## [20] {other vegetables}   => {sausage}          0.01261768 0.1014188 
+    ## [21] {sausage}            => {whole milk}       0.01255230 0.2077922 
+    ## [22] {bottled water}      => {soda}             0.01464435 0.2060718 
+    ## [23] {soda}               => {bottled water}    0.01464435 0.1306122 
+    ## [24] {tropical fruit}     => {root vegetables}  0.01098326 0.1627907 
+    ## [25] {root vegetables}    => {tropical fruit}   0.01098326 0.1567164 
+    ## [26] {tropical fruit}     => {other vegetables} 0.01549425 0.2296512 
+    ## [27] {other vegetables}   => {tropical fruit}   0.01549425 0.1245402 
+    ## [28] {tropical fruit}     => {whole milk}       0.01830544 0.2713178 
+    ## [29] {whole milk}         => {tropical fruit}   0.01830544 0.1114206 
+    ## [30] {root vegetables}    => {other vegetables} 0.02536611 0.3619403 
+    ## [31] {other vegetables}   => {root vegetables}  0.02536611 0.2038886 
+    ## [32] {root vegetables}    => {whole milk}       0.02262029 0.3227612 
+    ## [33] {whole milk}         => {root vegetables}  0.02262029 0.1376840 
+    ## [34] {yogurt}             => {rolls/buns}       0.01189854 0.1326531 
+    ## [35] {rolls/buns}         => {yogurt}           0.01189854 0.1006081 
+    ## [36] {yogurt}             => {other vegetables} 0.01588651 0.1771137 
+    ## [37] {other vegetables}   => {yogurt}           0.01588651 0.1276931 
+    ## [38] {yogurt}             => {whole milk}       0.02425471 0.2704082 
+    ## [39] {whole milk}         => {yogurt}           0.02425471 0.1476323 
+    ## [40] {soda}               => {rolls/buns}       0.01425209 0.1271137 
+    ## [41] {rolls/buns}         => {soda}             0.01425209 0.1205086 
+    ## [42] {rolls/buns}         => {whole milk}       0.01830544 0.1547816 
+    ## [43] {whole milk}         => {rolls/buns}       0.01830544 0.1114206 
+    ## [44] {other vegetables}   => {whole milk}       0.04086036 0.3284288 
+    ## [45] {whole milk}         => {other vegetables} 0.04086036 0.2487067 
+    ##      lift     count
+    ## [1]  1.000000 1715 
+    ## [2]  1.000000 1809 
+    ## [3]  1.000000 1903 
+    ## [4]  1.000000 2513 
+    ## [5]  2.241875  193 
+    ## [6]  2.457036  220 
+    ## [7]  1.510895  175 
+    ## [8]  3.864800  194 
+    ## [9]  3.864800  194 
+    ## [10] 1.804191  167 
+    ## [11] 1.570774  192 
+    ## [12] 1.507495  156 
+    ## [13] 3.477820  191 
+    ## [14] 3.477820  191 
+    ## [15] 1.935400  196 
+    ## [16] 1.935400  196 
+    ## [17] 1.465605  196 
+    ## [18] 1.509911  165 
+    ## [19] 1.678898  193 
+    ## [20] 1.678898  193 
+    ## [21] 1.264779  192 
+    ## [22] 1.837944  224 
+    ## [23] 1.837944  224 
+    ## [24] 2.322805  168 
+    ## [25] 2.322805  168 
+    ## [26] 1.845898  237 
+    ## [27] 1.845898  237 
+    ## [28] 1.651444  280 
+    ## [29] 1.651444  280 
+    ## [30] 2.909216  388 
+    ## [31] 2.909216  388 
+    ## [32] 1.964566  346 
+    ## [33] 1.964566  346 
+    ## [34] 1.121648  182 
+    ## [35] 1.121648  182 
+    ## [36] 1.423611  243 
+    ## [37] 1.423611  243 
+    ## [38] 1.645907  371 
+    ## [39] 1.645907  371 
+    ## [40] 1.074810  218 
+    ## [41] 1.074810  218 
+    ## [42] 0.942117  280 
+    ## [43] 0.942117  280 
+    ## [44] 1.999064  625 
+    ## [45] 1.999064  625
+
+The level of confidence was chosen based on interpretability since it
+was difficult to find any rules for confidence greater than 4.
+Confidence measures how often items in itemset Y appear in transactions
+which contain itemset X. Some rules that were identified through this
+method was associations like curd and whole milk (perhaps for dairy
+lovers?), and both root vegetables and other vegetables and whole milk.
+This could be useful to know in a retail context i.e. where and when to
+give promotions or ideas for product placement for milk given that you
+already are in the vegetable section. This is also reflected in the plot
+of association rules where “whole milk” and “other vegetables” are the
+two largest
+    clusters.
+
+    ##     lhs                   rhs                support    confidence
+    ## [1] {curd}             => {whole milk}       0.01261768 0.3683206 
+    ## [2] {butter}           => {whole milk}       0.01438285 0.4036697 
+    ## [3] {root vegetables}  => {other vegetables} 0.02536611 0.3619403 
+    ## [4] {root vegetables}  => {whole milk}       0.02262029 0.3227612 
+    ## [5] {other vegetables} => {whole milk}       0.04086036 0.3284288 
+    ##     lift     count
+    ## [1] 2.241875 193  
+    ## [2] 2.457036 220  
+    ## [3] 2.909216 388  
+    ## [4] 1.964566 346  
+    ## [5] 1.999064 625
+
+    ## To reduce overplotting, jitter is added! Use jitter = 0 to prevent jitter.
+
+![](Exercise_4_files/figure-gfm/unnamed-chunk-36-1.png)<!-- -->
+
+Support measures the frequency of an itemset within transactions. The
+choice of a low level of support was driven by the fact that there
+weren’t too many different grocery items within the dataset. Again, a
+strong association between “whole milk” and “other vegetables,” perhaps
+since these are generally staple
+    items.
+
+    ##     lhs                   rhs                support    confidence
+    ## [1] {}                 => {soda}             0.11212082 0.1121208 
+    ## [2] {}                 => {rolls/buns}       0.11826621 0.1182662 
+    ## [3] {}                 => {other vegetables} 0.12441161 0.1244116 
+    ## [4] {}                 => {whole milk}       0.16429132 0.1642913 
+    ## [5] {other vegetables} => {whole milk}       0.04086036 0.3284288 
+    ## [6] {whole milk}       => {other vegetables} 0.04086036 0.2487067 
+    ##     lift     count
+    ## [1] 1.000000 1715 
+    ## [2] 1.000000 1809 
+    ## [3] 1.000000 1903 
+    ## [4] 1.000000 2513 
+    ## [5] 1.999064  625 
+    ## [6] 1.999064  625
+
+When looking at lift, the rules that were generated were generally
+intuitive. For example, if a consumer buys root vegetables, he or she is
+likely to also purchase “other vegetables,” or has a conditional
+probability of 2.909. Another intuitive rule that was generated was that
+the conditional probability of purchasing citrus fruit given that you
+already bought tropical fruit was 3.477. This make sense considering
+that grocery stores tend to group these items together and offer
+promotions for similar items. Again, this is reflected in the overall
+plot of the 45 association rules where different types of fruits are
+grouped together in the top right corner. Lift might be the most
+informative measure since it measures the conditional probability of
+purchasing itemset X given that you already purchased itemset Y and
+therefore takes into account statistical dependence, whereas confidence
+and support do
+    not.
+
+    ##      lhs                   rhs                support    confidence
+    ## [1]  {curd}             => {whole milk}       0.01261768 0.3683206 
+    ## [2]  {butter}           => {whole milk}       0.01438285 0.4036697 
+    ## [3]  {pip fruit}        => {tropical fruit}   0.01268305 0.2607527 
+    ## [4]  {tropical fruit}   => {pip fruit}        0.01268305 0.1879845 
+    ## [5]  {citrus fruit}     => {tropical fruit}   0.01248692 0.2346437 
+    ## [6]  {tropical fruit}   => {citrus fruit}     0.01248692 0.1850775 
+    ## [7]  {tropical fruit}   => {root vegetables}  0.01098326 0.1627907 
+    ## [8]  {root vegetables}  => {tropical fruit}   0.01098326 0.1567164 
+    ## [9]  {root vegetables}  => {other vegetables} 0.02536611 0.3619403 
+    ## [10] {other vegetables} => {root vegetables}  0.02536611 0.2038886 
+    ##      lift     count
+    ## [1]  2.241875 193  
+    ## [2]  2.457036 220  
+    ## [3]  3.864800 194  
+    ## [4]  3.864800 194  
+    ## [5]  3.477820 191  
+    ## [6]  3.477820 191  
+    ## [7]  2.322805 168  
+    ## [8]  2.322805 168  
+    ## [9]  2.909216 388  
+    ## [10] 2.909216 388
+
+When combining all three measures, we found the following 10 “best”
+associations.
+
+    ## set of 45 rules
+    ## 
+    ## rule length distribution (lhs + rhs):sizes
+    ##  1  2 
+    ##  4 41 
+    ## 
+    ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+    ##   1.000   2.000   2.000   1.911   2.000   2.000 
+    ## 
+    ## summary of quality measures:
+    ##     support          confidence          lift            count     
+    ##  Min.   :0.01020   Min.   :0.1006   Min.   :0.9421   Min.   : 156  
+    ##  1st Qu.:0.01255   1st Qu.:0.1277   1st Qu.:1.4236   1st Qu.: 192  
+    ##  Median :0.01438   Median :0.1786   Median :1.6789   Median : 220  
+    ##  Mean   :0.02654   Mean   :0.1959   Mean   :1.8383   Mean   : 406  
+    ##  3rd Qu.:0.02262   3rd Qu.:0.2408   3rd Qu.:1.9991   3rd Qu.: 346  
+    ##  Max.   :0.16429   Max.   :0.4037   Max.   :3.8648   Max.   :2513  
+    ## 
+    ## mining info:
+    ##         data ntransactions support confidence
+    ##  grocertrans         15296    0.01        0.1
+
+![](Exercise_4_files/figure-gfm/unnamed-chunk-42-1.png)<!-- -->
+
+![](Exercise_4_files/figure-gfm/unnamed-chunk-43-1.png)<!-- -->
