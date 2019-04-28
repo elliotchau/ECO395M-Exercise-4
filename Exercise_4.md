@@ -366,7 +366,7 @@ segment the market into different groups.
 In doing so we found six main marketing groups based on correlated
 interests. We believe that by focusing their attention on these six
 groups, NutrientH20 can direct their content in order to relate to these
-subgroups to further their sales.
+subgroups to further their sales. From left to right, we might be able to broadly group them as middle-aged Americans, entertainment focus, college students, health focus, leisure focus, and business people.
 
 # Problem 3
 
