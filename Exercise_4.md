@@ -523,10 +523,6 @@ relevant subsets based on confidence, lift, and support later.
     ## [44] 1.999064  625 
     ## [45] 1.999064  625
 
-We then created a subset to only include a lift measure of greater than
-2, a confidence measure greater than 0.3, and a subset with support
-greater than 0.035.
-
 The level of confidence was chosen based on interpretability since it
 was difficult to find any rules for confidence greater than 4.
 Confidence measures how often items in itemset Y appear in transactions
@@ -620,14 +616,13 @@ This is the subset for lift \>
     ## [9]  2.909216 388  
     ## [10] 2.909216 388
 
-We combine these three measures to create a scatterplot and a two-key
+We then created a subset to only include a lift measure of greater than
+2, a confidence measure greater than 0.3, and a subset with support
+greater than 0.035. We combine these three measures to create a scatterplot and a two-key
 plot.
-
-    ## To reduce overplotting, jitter is added! Use jitter = 0 to prevent jitter.
 
 ![](Exercise_4_files/figure-gfm/unnamed-chunk-39-1.png)<!-- -->
 
-    ## To reduce overplotting, jitter is added! Use jitter = 0 to prevent jitter.
 
 ![](Exercise_4_files/figure-gfm/unnamed-chunk-39-2.png)<!-- -->
 
