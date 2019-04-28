@@ -63,7 +63,7 @@ Indeed, when applying "supervised" information to add color, the plot is separat
 
 To further analyze the data, we create a correlation matrix of how chemical characteristics relate to each other. This may allow us to test various relationships in the next part.
 
-```{r, include=FALSE}
+```{r, echo=FALSE, warning=FALSE, message=FALSE, error=FALSE}
 rquery.cormat(X)
 ```
 
@@ -226,7 +226,7 @@ SM2 <- SM
 
 Due to the multiple dimensions amongst tweets from their followers, we used principal component analysis to reduce the dimensionality of the data. The following is the distribution of our cleaned data.
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, warning=FALSE, message=FALSE, error=FALSE}
 # Check distribution for SM2
 SM2 %>% 
   gather(Variable, Value) %>% 
@@ -298,3 +298,8 @@ rect.hclust(hc, k=6, border='red')
 ```
 
 In doing so we found 6 main marketing groups based on correlated interests. We believe that by focusing their attention on these six groups, NutrientH20 can direct their content in order to relate to these subgroups to further their sales. 
+
+Problem 2
+================
+## Association rules for grocery purchases
+
